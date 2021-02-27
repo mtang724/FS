@@ -7,7 +7,7 @@ matplotlib
 
 fpdf2
 ## Basic Usage
-Put the `ReportGeneration.py` file in the root of target folder in [Swear_cleaner.py]("https://github.com/Boukhechba/PPG/blob/master/Swear_cleaner.py")
+Put the `ReportGeneration.py` file in the root of [Swear_cleaner.py](https://github.com/Boukhechba/PPG/blob/master/Swear_cleaner.py)'s target folder
 
 Example:
 ```python ReportGeneration.py --deviceid 6f76c9b33efc0bdb --start_date 2020-12-17 --end_date 2021-01-01```
