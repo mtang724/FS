@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from fpdf import FPDF
 import argparse
 
+
 # filtering data according to deviceid, start date, and end date
 def filtering_data(df, deviceid, start_date, end_date, operation):
 	filtered_df = df.loc[df['DeviceId'] == deviceid]
@@ -11,8 +12,9 @@ def filtering_data(df, deviceid, start_date, end_date, operation):
 		day_df = filtered_df.set_index(pd.DatetimeIndex(pd.to_datetime(filtered_df['T']))).groupby(pd.Grouper(freq='D')).sum()
 	elif operation == 'mean':
 		day_df = filtered_df.set_index(pd.DatetimeIndex(pd.to_datetime(filtered_df['T']))).groupby(pd.Grouper(freq='D')).mean()
-	elif operation == 'max':
-		day_df = filtered_df.set_index(pd.DatetimeIndex(pd.to_datetime(filtered_df['T']))).groupby(pd.Grouper(freq='D')).max()
+	elif operation == 'max-min':
+		day_df = filtered_df.set_index(pd.DatetimeIndex(pd.to_datetime(filtered_df['T']))).groupby(pd.Grouper(freq='D'))['Count'].agg(['max','min'])
+		day_df['Count'] = day_df['max']-day_df['min']
 	return day_df
 
 # save figures and return figure file names
@@ -67,10 +69,9 @@ def main(args):
 	filtered_fluid_df = filtering_data(fluid_df, args.deviceid, args.start_date, args.end_date, operation="sum")
 	fluid_filenames = draw_figure('fluid', filtered_fluid_df, "Daily Fluid Intake Volume", "Volume")
 	step_df = pd.read_csv('Smartwatch_StepCountDatum.csv')
-	filtered_step_df = filtering_data(step_df, args.deviceid, args.start_date, args.end_date, operation="max")
+	filtered_step_df = filtering_data(step_df, args.deviceid, args.start_date, args.end_date, operation="max-min")
 	step_filenames = draw_figure('step', filtered_step_df, "Daily Step Count", "Count")
 	filenames = hear_filenames + fluid_filenames + step_filenames
-	print(filenames)
 	# pass image filenames as imagelist
 	generate_pdf(args.deviceid, filenames)
 
